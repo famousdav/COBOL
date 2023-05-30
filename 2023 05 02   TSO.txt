@@ -1,0 +1,245 @@
+DATE JOUR
+---------
+2023 05 02
+***************************************************
+
+
+
+TITRES 
+
+
+
+      *----------------------------*
+      * *                        * *
+       IDENTIFICATION DIVISION.
+      * *                        * *
+      *----------------------------*
+      *----------------------------*
+      * *                        * *
+       ENVIRONMENT DIVISION.
+      * *                        * *
+      *----------------------------*
+      *---------------------------------------------------------------| 
+       CONFIGURATION SECTION.
+      *---------------------------------------------------------------| 
+      *---------------------------------------------------------------| 
+       INPUT-OUTPOUT SECTION.
+      *---------------------------------------------------------------| 
+      *----------------------------*
+      * *                        * *
+       DATA DIVISION.
+      * *                        * *
+      *----------------------------*
+      *-------------------------------------------------------------| 
+       FILE SECTION.
+      *-------------------------------------------------------------| 
+      *-------------------------------------------------------------|
+       WORKING-STORAGE SECTION.                                      
+      *-------------------------------------------------------------|
+      *-------------------------------------------------------------| 
+       LINKAGE SECTION.      
+      *-------------------------------------------------------------| 
+      *----------------------------*
+      * *                        * *
+       PROCEDURE DIVISION.
+      * *                        * *
+      *----------------------------*
+
+
+
+
+      *****************************
+      *  WORKING STORAGE SECTION  |
+      *****************************
+
+
+
+
+
+
+
+
+***************************************************
+ALGORITHMES
+-----------
+↲  <  <=  ≤  <  >  ≠  >  >=  ≥  <>  ←  →  ↓  ↑
+***************************************************
+
+
+***************************************************
+PARAMETRES TSO
+--------------
+command ===> PROF ↲  
+PROF LOCK   
+HILITE ON   ou JCL ou AUTO
+AUTONUM OFF pour ne pas afficher les chiffres 
+CAPS OFF    pour pas de majuscules automatique
+HEX OFF     sinon affiche en hexadécimal
+RECOVERY ON pour récupérer les dernières actions en cas de coupure
+AUTOSAVE ON pour sauvegarder automatiquement
+RES	    Sortir/Exit du menu
+***************************************************
+
+
+***************************************************
+TSO
+---
+====>    c all x'41' x'40'
+Copy 'api0.source.cobol(test1)'
+command ===>
+l 538 arriver sur ligne 538
+f 538 rechercher ligne 538 ou 538
+f p'.'      pour faire apparaitre zone "non diplay"
+"x all" pour tout cacher et "f fruit all" pour afficher que les lignes avec 'fruit'
+xx
+  xx 	=> cacher ce groupe de ligne
+c	=> copier la ligne
+cc
+  cc 	=> copier ce groupe de ligne
+r11 	=> répeter 11 fois cette ligne
+rr
+  rr 	=> répeter ce groupe de ligne
+//p
+//   	=> purger le spool (m.5;h)
+dd
+dd   	=> delete le groupe
+))   	=> décaler ligne à droite →  
+((   	=> décaler ligne à gauche ←  
+after 
+before 
+ERREUR B37 plus de place, compresser la bibliothèque en 3.1 'C' pour compress
+CtrlMaj V pour supprimer la mise en forme
+
+A	after
+B	before
+RES	supprimer les d, dd, b, xx...
+s	faire apparaitre au dessus
+l	faire apparaitre au dessous
+lc	lower case pour laisser en minuscules (affichage pour utilisateurs)
+uc	upper case pour mettre en majuscules
+cut and past pour copier un bout de jcl
+cc et creat en commad pour creer membre avec morceau choisi
+***************************************************
+
+
+***************************************************
+PROGRAMME COBOL
+---------------
+ IDENTIFICATION DIVISION.
+ PROGRAM-ID. CAMAGPP.
+ AUTHOR. DAVID.
+ DATE-WRITTEN. 11/04/2023.
+*-------------------------------------------------------------*
+*  FONCTION DU PROGRAMME :                                    *
+*           INDICATION DU CHIFFRE D'AFFAIRES     \\|||||//    *
+*           DES MAGASINS TRIES PAR VILLES        \  ~ ~  /    *
+*  110404 : CREATION DU PROGRAMME                (  @ @  )    *
+*----------------------------------------------OOOO-(_)-OOOO--*
+ ENVIRONMENT DIVISION.
+ CONFIGURATION SECTION.
+* LE CARACTERE POUR LA PONCTUATION DECIMALE EST LA VIRGULE
+ SPECIAL-NAMES.
+     DECIMAL-POINT IS COMMA.
+* DECLARATION DU FICHIER
+ INPUT-OUTPUT SECTION.
+ FILE-CONTROL.
+
+fs veut dire file status, si différent de 0 erreur
+***************************************************
+
+
+***************************************************
+Bibliothèques TSO
+-----------------
+API6.SOURCE.COBOL
+API6.SOURCE.DB2
+API6.SOURCE.JCL
+API6.EDITION
+****************************************************
+
+
+****************************************************
+JCL
+---
+//API6AA   JOB 'DAV',MSGLEVEL=(1,1),MSGCLASS=H,CLASS=A,
+//   NOTIFY=&SYSUID,COND=(4,LT),TIME=(,3),RESTART=*
+
+- disp new = creer
+- catlg si le step s'est bien déroulé
+        delete si le step ne va pas fichier a supprimer
+- IDCAMS a besoin d'un ordre qui doit être stipulé dans SYSIN
+- sysprint ou on va ecrire, ou va aller le compte rendu, sysout=* est la      classe du spool, * par défaut la msgclass
+- SYSIN   DD   *   veut dire que la SYSIN contient des choses qui vont être      comprise par le programme avec, en dessous, les precisions
+     dans la sysin on commence a ecrire à la colonne 1 pour chaque ACCEPT, les      lignes à renseigner
+     1 ligne de sysin = 1 enregistrement, 1 boucle ACCEPT (jusque fin) WRITE,      sysin dd * puis ligne en dessous dès la colonne 1
+     attention pour IDCAMS, il faut écrire au 2eme caractere
+- msgclass est donnée pour chaque application
+- dsorg = ps pour sequentiel (3.4)
+- sequentiel necessite organization, record format, record lenght, block size,      1st extend trancks, secondary tracks
+- EXEC pour programme (même nom programme pour COBOL.SYSIN et STEP PGM=)
+     programme n'est pas fichier
+- il faut bien supprimer précédent pour nouveau et supprimer à la fin (DISP=(SHR,KEEP,KEEP))
+- FS 39, Vérifier :
+	- organisation du fichier
+	- la taille du record
+	- le type de fichier (fixe ou variable)
+	- la clé primaire
+	- les clés secondaires
+*****************************************************
+
+
+ESSAI  EMPLOYE   OK fontionne		ESSAIJCL OK
+TEST3  EMPLOYE   OK fontionne		TEST3JCL OK
+TEST4  DEPARTEMENT			TEST4JCL OK
+TEST5  					TEST5JCL (pas fait)
+
+
+UPDATE SQL
+33
+hvd-lie
+
+
+3.4
+DSLIST - Data Sets Matching API6*     Empty data set or member 
+API6.COBOL.EDITION
+API6.COB.EDITION
+
+curseur en working cause compilateur, si programme structuré DB2/COBOL, le précompilateur doit avoir le EXEC SQL DECLARE doit se trouver avant les autres EXEC SQL
+SQLCA contient le file status
+
+tutorialspoint.com/steps-involved-in-compilation-of-a-cobol-db2-program
+
+
+
+culture du test
+formation insuffisante
+le client va donner les taches
+il faut connaitre les tâches/procedures à accomplir pour réaliser l'objectif
+homologation, recetage, environnement de tests fonctionnels
+exercices niveau FSD (		fonctionnalité détailées)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Natixis
+seconda.david@gmail.com
+23012004
